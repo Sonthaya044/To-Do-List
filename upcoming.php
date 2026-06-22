@@ -1,6 +1,10 @@
 <?php
 session_start();
+<<<<<<< HEAD
 include "includes/config.php";
+=======
+require_once __DIR__ . "/includes/config.php";
+>>>>>>> 9d61535 (Prepare Vercel PHP deploy: add vercel.json and fix config includes)
 
 if (!isset($_SESSION['username'])) {
     header("Location: auth.php");
