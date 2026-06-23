@@ -1,0 +1,79 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <title>Calendar - To Do App</title>
+    <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+<aside>
+    <div>
+        <h2>Menu</h2>
+        <hr>
+        <ul>
+            <li><a href="/today">📍 Today</a></li>
+            <li><a href="/upcoming">⏳ Upcoming</a></li>
+            <li><a href="/calendar">🗓️ Calendar</a></li>
+            <li><a href="/home">📝 Sticky Wall</a></li>
+        </ul>
+        <div class="lists">
+            <h3>Lists</h3>
+            <ul>
+                <li>🔴 High <span class="task-count"><%= counter.high %></span></li>
+                <li>🟠 Medium <span class="task-count"><%= counter.medium %></span></li>
+                <li>🟢 Low <span class="task-count"><%= counter.low %></span></li>
+            </ul>
+        </div>
+    </div>
+    <div class="bottom-links">
+        <a href="/logout">🚪 Sign out</a>
+    </div>
+</aside>
+
+<div class="main">
+    <h1>📆 Calendar</h1>
+
+    <div class="calendar-container">
+        <div class="calendar-nav">
+            <a href="/calendar?month=<%= prev.month %>&year=<%= prev.year %>" class="nav-arrow">&lt;</a>
+            <span class="current-month"><%= monthName %> <%= year %></span>
+            <a href="/calendar?month=<%= next.month %>&year=<%= next.year %>" class="nav-arrow">&gt;</a>
+        </div>
+
+        <table class="calendar-table">
+            <thead>
+                <tr>
+                    <th>Sun</th><th>Mon</th><th>Tue</th><th>Wed</th><th>Thu</th><th>Fri</th><th>Sat</th>
+                </tr>
+            </thead>
+            <tbody>
+                <tr>
+                    <% for (let i = 0; i < offset; i++) { %>
+                        <td></td>
+                    <% } %>
+                    <% for (let day = 1; day <= daysInMonth; day++) { %>
+                        <% if ((day + offset - 1) % 7 === 0 && day !== 1) { %>
+                            </tr><tr>
+                        <% } %>
+                        <td class="day-cell<%= new Date(year, month-1, day).toDateString() === new Date().toDateString() ? ' today' : '' %>">
+                            <div class="day-number"><%= day %></div>
+                            <% const dayKey = String(day); if (eventMap[dayKey]) { %>
+                                <div class="events">
+                                    <% eventMap[dayKey].forEach(event => { %>
+                                        <div class="event priority-<%= event.priority.toLowerCase() %><%= event.is_completed ? ' completed' : '' %>"><%= event.title %></div>
+                                    <% }) %>
+                                </div>
+                            <% } %>
+                        </td>
+                    <% } %>
+                    <% const remaining = (7 - ((offset + daysInMonth) % 7)) % 7; %>
+                    <% for (let i = 0; i < remaining; i++) { %>
+                        <td></td>
+                    <% } %>
+                </tr>
+            </tbody>
+        </table>
+    </div>
+</div>
+</body>
+</html>

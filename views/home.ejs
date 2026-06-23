@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Sticky Wall - To Do App</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <aside>
+    <div>
+      <h2>Menu</h2>
+      <hr>
+      <ul>
+        <li><a href="/today">📍 Today</a></li>
+        <li><a href="/upcoming">⏳ Upcoming</a></li>
+        <li><a href="/calendar">🗓️ Calendar</a></li>
+        <li><a href="/home">📝 Sticky Wall</a></li>
+      </ul>
+      <div class="lists">
+        <h3>Lists</h3>
+        <ul>
+          <li>🔴 High <span class="task-count"><%= counter.high %></span></li>
+          <li>🟠 Medium <span class="task-count"><%= counter.medium %></span></li>
+          <li>🟢 Low <span class="task-count"><%= counter.low %></span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="bottom-links">
+      <a href="/logout">🚪 Sign out</a>
+    </div>
+  </aside>
+
+  <div class="main">
+    <h1>Sticky Wall</h1>
+    <div class="grid">
+      <% notes.forEach(note => { %>
+        <div class="note <%= note.is_completed ? 'completed' : '' %>" style="background-color: <%= note.color %>">
+          <h3><%= note.title %></h3>
+          <p><%= note.content ? note.content.replace(/\n/g, '<br>') : '' %></p>
+          <div class="note-meta">
+            <span><%= note.due_date ? new Date(note.due_date).toLocaleDateString('th-TH', { day: 'numeric', month: 'short', year: 'numeric' }) : '' %></span>
+            <% if (note.priority) { %>
+              <span class="priority-tag priority-<%= note.priority %>"><%= note.priority %></span>
+            <% } %>
+          </div>
+          <div class="note-actions">
+            <a href="#" class="edit-btn" onclick='openEditForm(<%- JSON.stringify(note) %>)'>แก้ไข</a>
+            <a href="/delete?id=<%= note.id %>" class="delete-btn" onclick="return confirm('คุณแน่ใจหรือไม่ว่าต้องการลบโน้ตนี้?')">ลบ</a>
+          </div>
+        </div>
+      <% }) %>
+      <div class="note add-note" onclick="openForm()">+</div>
+    </div>
+
+    <div id="noteForm" class="modal-overlay">
+      <form action="/save" method="post" class="modal-form">
+        <h3>เพิ่ม Note</h3>
+        <label for="title-input">หัวข้อ</label>
+        <input type="text" name="title" id="title-input" placeholder="Title" required>
+        <label for="content-input">เนื้อหา</label>
+        <textarea name="content" id="content-input" placeholder="Content"></textarea>
+        <div class="form-row">
+          <div>
+            <label for="due_date">วันที่:</label>
+            <input type="date" name="due_date" id="due_date">
+          </div>
+          <div>
+            <label for="priority">ความสำคัญ:</label>
+            <select name="priority" id="priority">
+              <option value="Low">น้อย</option>
+              <option value="Medium" selected>ปานกลาง</option>
+              <option value="High">สูง</option>
+            </select>
+          </div>
+        </div>
+        <label for="color-input">สี:</label>
+        <input type="color" name="color" id="color-input" value="#fff7b0" style="width: 100%; height: 40px; padding: 0;">
+        <div class="form-actions">
+          <button type="button" onclick="closeForm()">ยกเลิก</button>
+          <button type="submit">บันทึก</button>
+        </div>
+      </form>
+    </div>
+
+    <div id="editNoteForm" class="modal-overlay">
+      <form action="/update" method="post" class="modal-form">
+        <h3>แก้ไข Note</h3>
+        <input type="hidden" id="edit_note_id" name="note_id">
+        <label for="edit_title">หัวข้อ</label>
+        <input type="text" id="edit_title" name="title" placeholder="Title" required>
+        <label for="edit_content">เนื้อหา</label>
+        <textarea id="edit_content" name="content" placeholder="Content"></textarea>
+        <div class="form-row">
+          <div>
+            <label for="edit_due_date">วันที่:</label>
+            <input type="date" name="due_date" id="edit_due_date">
+          </div>
+          <div>
+            <label for="edit_priority">ความสำคัญ:</label>
+            <select name="priority" id="edit_priority">
+              <option value="Low">น้อย</option>
+              <option value="Medium">ปานกลาง</option>
+              <option value="High">สูง</option>
+            </select>
+          </div>
+        </div>
+        <label for="edit_color">สี:</label>
+        <input type="color" id="edit_color" name="color" style="width: 100%; height: 40px; padding: 0;">
+        <div class="form-actions">
+          <button type="button" onclick="closeEditForm()">ยกเลิก</button>
+          <button type="submit">บันทึกการเปลี่ยนแปลง</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+  <script>
+    function openForm(){document.getElementById('noteForm').style.display='flex';}
+    function closeForm(){document.getElementById('noteForm').style.display='none';}
+    function closeEditForm(){document.getElementById('editNoteForm').style.display='none';}
+    function openEditForm(note) {
+      document.getElementById('edit_note_id').value = note.id;
+      document.getElementById('edit_title').value = note.title;
+      document.getElementById('edit_content').value = note.content;
+      document.getElementById('edit_color').value = note.color || '#fff7b0';
+      document.getElementById('edit_due_date').value = note.due_date || '';
+      document.getElementById('edit_priority').value = note.priority || 'Medium';
+      document.getElementById('editNoteForm').style.display = 'flex';
+    }
+  </script>
+</body>
+</html>

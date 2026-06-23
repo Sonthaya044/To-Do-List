@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+  <meta charset="UTF-8">
+  <title>Upcoming - To Do App</title>
+  <link rel="stylesheet" href="/style.css">
+</head>
+<body>
+  <aside>
+    <div>
+      <h2>Menu</h2>
+      <hr>
+      <ul>
+        <li><a href="/today">📍 Today</a></li>
+        <li><a href="/upcoming">⏳ Upcoming</a></li>
+        <li><a href="/calendar">🗓️ Calendar</a></li>
+        <li><a href="/home">📝 Sticky Wall</a></li>
+      </ul>
+      <div class="lists">
+        <h3>Lists</h3>
+        <ul>
+          <li>🔴 High <span class="task-count"><%= counter.high %></span></li>
+          <li>🟠 Medium <span class="task-count"><%= counter.medium %></span></li>
+          <li>🟢 Low <span class="task-count"><%= counter.low %></span></li>
+        </ul>
+      </div>
+    </div>
+    <div class="bottom-links">
+      <a href="/logout">🚪 Sign out</a>
+    </div>
+  </aside>
+  <div class="main">
+    <h1>🗓️ Upcoming (3 Days)</h1>
+    <div class="today-list">
+      <% if (Object.keys(grouped_notes).length === 0) { %>
+        <p style="text-align:center; margin-top: 20px;">✨ ยอดเยี่ยม! ไม่มีงานสำหรับ 3 วันข้างหน้า</p>
+      <% } else { %>
+        <% for (const date in grouped_notes) { %>
+          <div class="date-group">
+            <h2><%= new Date(date).toLocaleDateString('th-TH', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' }) %></h2>
+            <% grouped_notes[date].forEach(note => { %>
+              <div class="today-note <%= note.is_completed ? 'completed' : '' %>" style="border-left-color: <%= note.color %>">
+                <div class="note-info">
+                  <h3><%= note.title %></h3>
+                  <% if (note.content) { %>
+                    <p><%= note.content.replace(/\n/g, '<br>') %></p>
+                  <% } %>
+                </div>
+                <div class="note-priority">
+                  <span class="priority-tag priority-<%= note.priority %>"><%= note.priority %></span>
+                </div>
+              </div>
+            <% }); %>
+          </div>
+        <% } %>
+      <% } %>
+    </div>
+  </div>
+</body>
+</html>
